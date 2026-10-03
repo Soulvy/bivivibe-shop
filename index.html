@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BiviVibe_Shop</title>
+  
+  <!-- Font & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Mitr:wght@300;400;500;600&family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-main: #fdf7f8;
+      --card-bg: #ffffff;
+      --pastel-pink: #fde8ee;
+      --pastel-purple: #f3e8f7;
+      --accent-pink: #c8325a;
+      --accent-purple: #965ca8;
+      --accent-cream: #8c3b4d;
+      --text-dark: #3e262c;
+      --text-muted: #8b6b73;
+      --border-color: #f7d7e0;
+      --shadow-soft: 0 8px 24px rgba(168, 50, 80, 0.12);
+      --font-cute: 'Mali', 'Mitr', cursive;
+      --font-body: 'Mitr', 'Prompt', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-main);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 14px 80px 14px;
+      overflow-x: hidden;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    [data-netlify-deploy-id],
+    .netlify-badge,
+    iframe[title*="Netlify"],
+    div[class*="netlify"],
+    netlify-drawer,
+    #netlify-drawer,
+    div[data-testid="feedback-trigger"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .phone-container {
+      width: 100%;
+      max-width: 760px;
+      background: transparent;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+    }
+
+    /* Top Bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 10px 12px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      z-index: 20;
+    }
+
+    .status-bar .icons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Music Player Bar */
+    .music-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fff7fb 100%);
+      border: 1.5px solid var(--border-color);
+      border-radius: 22px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 16px rgba(200, 50, 90, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .music-info-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .vinyl-disc {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pastel-pink) 0%, var(--pastel-purple) 100%);
+      border: 2px solid #ffd6e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-pink);
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .vinyl-disc.playing {
+      animation: spinDisc 3.5s linear infinite;
+      box-shadow: 0 0 10px rgba(200, 50, 90, 0.4);
+    }
+
+    @keyframes spinDisc {
+      100% { transform: rotate(360deg); }
+    }
+
+    .song-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .song-title {
+      font-family: var(--font-cute);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 125px;
+    }
+
+    .song-status {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wave-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 10px;
+    }
+
+    .wave-bar {
+      width: 2px;
+      background: var(--accent-pink);
+      border-radius: 2px;
+      height: 3px;
+    }
+
+    .playing .wave-bar:nth-child(1) { animation: wave 0.8s ease-in-out infinite; }
+    .playing .wave-bar:nth-child(2) { animation: wave 0.6s ease-in-out infinite 0.2s; }
+    .playing .wave-bar:nth-child(3) { animation: wave 0.9s ease-in-out infinite 0.4s; }
+
+    @keyframes wave {
+      0%, 100% { height: 3px; }
+      50% { height: 10px; }
+    }
+
+    .music-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .music-btn {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: var(--accent-pink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .music-btn:hover {
+      transform: scale(1.1);
+      border-color: var(--accent-pink);
+      background: var(--pastel-pink);
+    }
+
+    .music-btn.play-btn {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-cream) 100%);
+      color: #ffffff;
+      border: none;
+      font-size: 13px;
+      box-shadow: 0 4px 10px rgba(200, 50, 90, 0.35);
+    }
+
+    .music-btn.play-btn:hover {
+      transform: scale(1.12);
+    }
+
+    .vol-divider {
+      display: flex;
+      gap: 4px;
+      margin-left: 4px;
+      padding-left: 6px;
+      border-left: 1px dashed var(--border-color);
+    }
+
+    /* Toast */
+    .toast-popup {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-30px);
+      background: rgba(62, 38, 44, 0.92);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-family: var(--font-cute);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .toast-popup.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Profile Header */
+    .profile-hero {
+      text-align: center;
+      padding: 0 0 20px 0;
+      position: relative;
+    }
+
+    .cover-wrapper {
+      width: 100%;
+      height: 220px;
+      border-radius: 28px;
+      overflow: hidden;
+      margin-bottom: -50px;
+      background: linear-gradient(135deg, #fef4f8 0%, #f6effc 100%);
+      border: 2px solid var(--border-color);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .cover-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .profile-mascot-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 20px rgba(200, 50, 90, 0.3);
+      margin: 0 auto 12px auto;
+      position: relative;
+      z-index: 5;
+      overflow: hidden;
+      background: #fff;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .profile-mascot-avatar:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .badge-pill {
+      display: inline-block;
+      background: var(--pastel-pink);
+      color: var(--accent-pink);
+      border: 1px solid #ffd5e4;
+      padding: 6px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-family: var(--font-cute);
+      font-weight: 600;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(200, 50, 90, 0.12);
+    }
+
+    .profile-title {
+      font-family: var(--font-cute);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-subtitle {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    /* Menu Buttons */
+    .menu-list {
+      padding: 10px 0 24px 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .menu-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      color: var(--text-dark);
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .menu-item-btn:hover {
+      transform: translateY(-4px) scale(1.015);
+      border-color: #f7cedd;
+      background: #fffdfd;
+      box-shadow: 0 12px 28px rgba(200, 50, 90, 0.2);
+    }
+
+    .menu-item-btn:active {
+      transform: translateY(1px) scale(0.985);
+    }
+
+    .menu-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .menu-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-item-btn:hover .menu-icon-box {
+      transform: rotate(8deg) scale(1.08);
+    }
+
+    .menu-info h4 {
+      font-family: var(--font-cute);
+      font-size: 17px;
+      font-weight: 600;
+      text-align: left;
+      color: var(--text-dark);
+    }
+
+    .menu-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: left;
+      margin-top: 2px;
+    }
+
+    .menu-chevron {
+      color: #d8c2cb;
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .menu-item-btn:hover .menu-chevron {
+      transform: translateX(4px);
+      color: var(--accent-pink);
+    }
+
+    /* Overlay Pages */
+    .page-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .page-overlay::-webkit-scrollbar {
+      display: none;
+    }
+
+    .page-overlay.active {
+      transform: translateX(0);
+    }
+
+    .overlay-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1.5px solid var(--border-color);
+      background: #fffbfc;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent-pink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-cute);
+      transition: transform 0.2s ease;
+      z-index: 2;
+    }
+
+    .back-btn:hover {
+      transform: translateX(-3px);
+    }
+
+    .overlay-title {
+      font-family: var(--font-cute);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-dark);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .overlay-content {
+      padding: 20px 16px;
+      max-width: 760px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .sub-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .page-banner-card {
+      background: #ffffff;
+      border: 1.5px dashed #f9c2d7;
+      border-radius: 24px;
+      padding: 16px 20px;
+      text-align: center;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .banner-title {
+      font-family: var(--font-cute);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent-pink);
+      margin-bottom: 4px;
+    }
+    .banner-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Queue Widgets */
+    .status-widget-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .status-widget-card {
+      background: #fffafd;
+      border: 1.5px solid #fed2e2;
+      border-radius: 22px;
+      padding: 14px 6px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .status-widget-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(200, 50, 90, 0.2);
+    }
+    .widget-label {
+      font-family: var(--font-cute);
+      font-size: 13px;
+      color: var(--accent-pink);
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+    }
+    .widget-number {
+      font-family: var(--font-cute);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent-pink);
+      line-height: 1.15;
+    }
+    .widget-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs-wrap {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0 14px 0;
+      margin-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-tabs-wrap::-webkit-scrollbar {
+      display: none;
+    }
+    .tab-filter-btn {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-family: var(--font-cute);
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tab-filter-btn.active {
+      background: var(--pastel-pink);
+      border-color: var(--accent-pink);
+      color: var(--accent-pink);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(200, 50, 90, 0.2);
+    }
+
+    /* Platform & Type Badges */
+    .platform-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: var(--font-cute);
+    }
+    .platform-line { background: #e8f9ed; color: #06c755; border-color: #c7f2d3; }
+    .platform-fb { background: #e7f3ff; color: #1877f2; border-color: #c7e1ff; }
+    .platform-ig { background: #fde8f1; color: #e1306c; border-color: #f8c2d7; }
+    .platform-tiktok { background: #f2f2f2; color: #111111; border-color: #ddd; }
+    .platform-x { background: #eef1f4; color: #0f1419; border-color: #ccd4dc; }
+    .platform-other { background: #fdf2f7; color: var(--accent-pink); border-color: #fed2e2; }
+
+    /* Queue Items */
+    .queue-item-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.2s ease;
+    }
+    .queue-item-card:hover {
+      transform: translateY(-2px);
+    }
+    .q-left-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .q-badge-circle {
+      min-width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px dashed #fbb6ce;
+      background: #fff6f9;
+      color: var(--accent-pink);
+      font-family: var(--font-cute);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .q-main-info {
+      text-align: left;
+    }
+    .q-client-name {
+      font-family: var(--font-cute);
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .q-client-plain-name {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .q-job-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .q-right-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .q-date-pill {
+      background: #fdf0f5;
+      color: var(--accent-pink);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .q-status-pill {
+      font-size: 11.5px;
+      font-family: var(--font-cute);
+      padding: 2px 10px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f5f5f5;
+      color: #737373;
+    }
+    .q-status-pill.pending { background: #fef7ee; color: #c07a1b; }
+    .q-status-pill.doing { background: #eff6ff; color: #2563eb; }
+    .q-status-pill.done { background: #ecfdf5; color: #059669; }
+
+    /* Review Styles */
+    .review-item-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: transform 0.2s ease;
+    }
+    .review-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #fff0f5;
+      border: 2px dashed #fbb6ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .review-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .review-body {
+      flex-grow: 1;
+    }
+    .review-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    .review-user-name {
+      font-family: var(--font-cute);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .review-stars {
+      color: #ffb900;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+    .review-comment-text {
+      font-size: 13px;
+      color: var(--text-dark);
+      line-height: 1.45;
+      margin-top: 2px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      flex-grow: 1;
+      border: 1.5px solid var(--border-color);
+      background: #fffdfd;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font-size: 13.5px;
+      outline: none;
+      font-family: inherit;
+      transition: all 0.25s ease;
+      color: var(--text-dark);
+    }
+
+    .search-input:focus {
+      border-color: #f7a9cb;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(200, 50, 90, 0.12);
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-cream) 100%);
+      color: #fff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-family: var(--font-cute);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 14px rgba(200, 50, 90, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(200, 50, 90, 0.4);
+    }
+
+    .copy-chip {
+      background: #ffffff;
+      border: 1.5px solid #fed2e2;
+      color: var(--accent-pink);
+      font-size: 12.5px;
+      font-family: var(--font-cute);
+      padding: 7px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.25s ease;
+      font-weight: 500;
+    }
+
+    .copy-chip:hover {
+      background: var(--pastel-pink);
+      border-color: var(--accent-pink);
+    }
+
+    .status-tag {
+      font-size: 12px;
+      font-family: var(--font-cute);
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-family: var(--font-cute);
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: var(--text-dark);
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      background: #fffdfd;
+      transition: border-color 0.2s;
+      color: var(--text-dark);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-radius: 20px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .contact-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .bank-payment-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 26px;
+      padding: 20px 16px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .bank-header-title {
+      font-family: var(--font-cute);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .qr-frame {
+      background: #ffffff;
+      border: 2px dashed #fbb6ce;
+      border-radius: 20px;
+      padding: 12px;
+      display: inline-block;
+      box-shadow: 0 4px 16px rgba(200, 50, 90, 0.08);
+      max-width: 280px;
+      width: 100%;
+      margin: 0 auto 16px auto;
+    }
+
+    .qr-frame img {
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .bank-notice-box {
+      background: #fff7fb;
+      border: 1px solid #ffd8e6;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: var(--text-dark);
+      line-height: 1.5;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .bank-account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .bank-info-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .bank-logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .bank-details h5 {
+      font-family: var(--font-cute);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .bank-details p {
+      font-size: 13px;
+      color: var(--accent-pink);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+      margin-top: 14px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #f4dce5;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3.5px solid var(--accent-pink);
+    }
+    .timeline-time {
+      color: var(--text-muted);
+      font-size: 11.5px;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .product-card {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .product-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: #fbd3e2;
+    }
+    .product-img {
+      width: 100%;
+      height: 110px;
+      background: var(--pastel-pink);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: var(--accent-pink);
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 30px 24px 90px 24px; }
+      .cover-wrapper { height: 260px; }
+      .menu-list { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .product-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      #queueListContainer { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="bgAudio" preload="auto"></audio>
+
+  <div class="phone-container">
+    
+    <!-- Top Status Bar -->
+    <div class="status-bar">
+      <span><i class="fa-regular fa-clock"></i> <span id="clockTime">12:00</span></span>
+      <div class="icons">
+        <i class="fa-solid fa-wifi"></i>
+        <i class="fa-solid fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Mini Music Player Bar -->
+    <div class="music-card" id="musicCard">
+      <div class="music-info-wrap">
+        <div class="vinyl-disc" id="vinylDisc">
+          <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="song-details">
+          <div class="song-title" id="songTitle">Igloo 🍦</div>
+          <div class="song-status" id="songStatus">
+            <span id="statusText">แตะเพื่อเล่นเพลง</span>
+            <div class="wave-bars">
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="music-controls">
+        <button class="music-btn" onclick="prevSong()" title="เพลงก่อนหน้า">
+          <i class="fa-solid fa-backward-step"></i>
+        </button>
+        <button class="music-btn play-btn" id="mainPlayBtn" onclick="togglePlayMusic()" title="เล่น/หยุด">
+          <i class="fa-solid fa-play" id="playIcon"></i>
+        </button>
+        <button class="music-btn" onclick="nextSong()" title="เพลงถัดไป">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+        <div class="vol-divider">
+          <button class="music-btn" onclick="adjustVolume(-0.05)" title="ลดเสียง (-)">
+            <i class="fa-solid fa-minus"></i>
+          </button>
+          <button class="music-btn" onclick="adjustVolume(0.05)" title="เพิ่มเสียง (+)">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-popup">
+      <i class="fa-solid fa-heart" style="color: #ffb4d2;"></i>
+      <span id="toastText">คัดลอกข้อมูลเรียบร้อยแล้วค่ะ</span>
+    </div>
+
+    <!-- Hero / Profile Section -->
+    <div class="profile-hero">
+      <div class="cover-wrapper">
+        <img alt="BiviVibe Cover" src="https://i.postimg.cc/qghzpL3L/bivi.png">
+      </div>
+      <div class="profile-mascot-avatar" title="BiviVibe Mascot">
+        <img src="https://i.postimg.cc/xXxGGQD5/IMG-5450.jpg" alt="BiviVibe Mascot Profile" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <span class="badge-pill">🌸 By BiviVibe_Shop 🌸</span>
+      <h1 class="profile-title">Handmade Studio</h1>
+      <p class="profile-subtitle">งานแฮนด์เมด • ลูกปัด • กิ๊บติดชื่อ • ลวดกำมะหยี่สุดคิ้วท์ 🌷</p>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="menu-list">
+      <button class="menu-item-btn" onclick="openPage('servicesPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:var(--pastel-pink); color:var(--accent-pink);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="menu-info">
+            <h4>รายการสินค้า (Catalog)</h4>
+            <p>ดูผลงานตัวอย่าง ลูกปัด กิ๊บติดชื่อ ลวดกำมะหยี่</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <button class="menu-item-btn" onclick="openPage('queuePage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:#fef5e9; color:#e08f36;">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          
+          <div class="menu-info">
+            <h4>เช็คคิวงาน (Queue)</h4>
+            <p>ตรวจสถานะออเดอร์ & ลำดับคิวผลิต</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <button class="menu-item-btn" onclick="openPage('trackingPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:#effbf4; color:#3aa474;">
+            <i class="fa-solid fa-truck-fast"></i>
+          </div>
+          <div class="menu-info">
+            <h4>เช็คสถานะการจัดส่ง (Tracking)</h4>
+            <p>ติดตามพัสดุ Flash / Kerry / EMS / J&T</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <button class="menu-item-btn" onclick="openPage('rewardPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:#fdebf2; color:var(--accent-pink);">
+            <i class="fa-solid fa-stamp"></i>
+          </div>
+          <div class="menu-info">
+            <h4>บัตรสะสมแต้ม (Reward Card)</h4>
+            <p>เช็คแต้มสะสม แลกรับสิทธิ์ส่งฟรี 1 ครั้ง</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <button class="menu-item-btn" onclick="openPage('reviewPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:#faebfa; color:#be69c4;">
+            <i class="fa-solid fa-heart"></i>
+          </div>
+          <div class="menu-info">
+            <h4>รีวิว (Review)</h4>
+            <p>อย่าลืมแวะมารีวิวความน่ารักกันน้าาา</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <button class="menu-item-btn" onclick="openPage('contactPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:var(--pastel-purple); color:var(--accent-purple);">
+            <i class="fa-solid fa-address-book"></i>
+          </div>
+          <div class="menu-info">
+            <h4>ช่องทางการติดต่อ (Contact)</h4>
+            <p>LINE, FB, IG, TikTok & ช่องทางชำระเงิน</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+    </div>
+
+    <!-- ==================== OVERLAY PAGES ==================== -->
+
+    <!-- PAGE 1: Services Catalog -->
+    <div id="servicesPage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('servicesPage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">รายการสินค้า (Catalog)</span>
+        <a href="https://line.me/ti/p/~@491dlvmm" target="_blank" class="copy-chip" style="color:#06c755; border-color:#06c755;">
+          <i class="fa-brands fa-line"></i> สั่งทำ
+        </a>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title">Catalog Showcase</div>
+          <div class="banner-desc">ชมผลงานและรายละเอียดสินค้าแฮนด์เมดของทางร้านได้เลยค่ะ ✨</div>
+        </div>
+
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; margin-bottom:12px;">
+          <button class="copy-chip cat-btn active" onclick="filterCatalog('all', this)" style="background:var(--pastel-pink); border-color:var(--accent-pink);">ทั้งหมด</button>
+          <button class="copy-chip cat-btn" onclick="filterCatalog('beads', this)">📿 งานลูกปัด</button>
+          <button class="copy-chip cat-btn" onclick="filterCatalog('clip', this)">🎀 งานกิ๊บติดชื่อ</button>
+          <button class="copy-chip cat-btn" onclick="filterCatalog('velvet', this)">🌷 งานลวดกำมะหยี่</button>
+        </div>
+
+        <!-- Beads -->
+        <div class="category-section" data-cat="beads" style="margin-bottom:28px;">
+          <h4 style="font-family:var(--font-cute); font-size:17px; font-weight:600; color:var(--accent-pink); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-gem"></i> งานลูกปัด (Custom Beads)
+          </h4>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-img" style="background:#fff2f7; color:var(--accent-pink);"><i class="fa-solid fa-key"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">พวงกุญแจลูกปัดห้อยกระเป๋า</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">เลือกโทนสี & จี้ตกแต่งได้ตามใจชอบ</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿59 - 89.-</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#fff2f7; color:var(--accent-pink);"><i class="fa-solid fa-ring"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">สร้อยข้อมือลูกปัดน่ารัก</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">สั่งทำตามขนาดข้อมือ แมทช์สีพาสเทล</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿69 - 129.-</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#fff2f7; color:var(--accent-pink);"><i class="fa-solid fa-mobile-screen-button"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">สายคล้องโทรศัพท์ลูกปัด</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">สายคล้องมือถือเส้นหนาทนทาน ตกแต่งน่ารัก</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿99 - 159.-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hair Clip -->
+        <div class="category-section" data-cat="clip" style="margin-bottom:28px;">
+          <h4 style="font-family:var(--font-cute); font-size:17px; font-weight:600; color:var(--accent-purple); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-ribbon"></i> งานกิ๊บติดชื่อ (Name Hair Clips)
+          </h4>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-img" style="background:#f7f0fc; color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">กิ๊บติดผมสั่งทำชื่อ (เดี่ยว)</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">ตัวอักษรน่ารัก เลือกสีพื้นหลังได้</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿49.- / ชิ้น</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#f7f0fc; color:var(--accent-purple);"><i class="fa-solid fa-heart"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">เซ็ตกิ๊บคู่ (2 ชิ้น) สั่งทำชื่อ</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">แมทช์คู่โทนสีพาสเทลสุดน่ารัก</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿89.- / เซ็ต</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#f7f0fc; color:var(--accent-purple);"><i class="fa-solid fa-crown"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">กิ๊บหนีบผมขนาดใหญ่ Custom</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">ติดชื่อ + ตกแต่งเรซิ่นจัดเต็ม</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿129 - 189.-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Velvet Wire -->
+        <div class="category-section" data-cat="velvet" style="margin-bottom:28px;">
+          <h4 style="font-family:var(--font-cute); font-size:17px; font-weight:600; color:var(--accent-purple); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-spa"></i> งานลวดกำมะหยี่ (Velvet Wire Crafts)
+          </h4>
+          <div class="product-grid">
+            <div class="product-card">
+              <div class="product-img" style="background:#f0faf4; color:#4ea57f;"><i class="fa-solid fa-seedling"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">พวงกุญแจลวดกำมะหยี่</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">ดอกไม้ ทิวลิป สัตว์จิ๋วสุดนุ่มฟู</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿59 - 99.-</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#f0faf4; color:#4ea57f;"><i class="fa-solid fa-fan"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">ช่อดอกไม้ลวดกำมะหยี่</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">ช่อดอกไม้ไม่มีวันเหี่ยว ของขวัญรับปริญญา</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿159 - 390.-</p>
+            </div>
+            <div class="product-card">
+              <div class="product-img" style="background:#f0faf4; color:#4ea57f;"><i class="fa-solid fa-gift"></i></div>
+              <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600;">กระถางต้นไม้ลวดกำมะหยี่</h5>
+              <p style="font-size:12px; color:var(--text-muted); margin:4px 0;">ตั้งโต๊ะทำงาน น่ารัก ไม่ต้องรดน้ำ</p>
+              <p style="font-family:var(--font-cute); font-size:14px; color:var(--accent-pink); font-weight:600; margin-top:6px;">฿129 - 220.-</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub-card" style="text-align:center; background:#fffbfc; border:1.5px dashed var(--accent-pink); margin-top:20px;">
+          <h5 style="font-family:var(--font-cute); font-size:16px; color:var(--accent-pink); margin-bottom:6px;">ถูกใจชิ้นไหน ทักแชทสั่งทำได้ทันทีเลยน้า 💖</h5>
+          <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">สามารถส่งภาพแบบที่ชอบ ระบุชื่อ และโทนสีที่ต้องการทาง LINE ได้เลยค่ะ</p>
+          <a href="https://line.me/ti/p/~@491dlvmm" target="_blank" class="btn-action" style="background:#06c755; text-decoration:none;">
+            <i class="fa-brands fa-line" style="font-size:18px;"></i> ทักแชท LINE สั่งทำสินค้า
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: Queue Page -->
+    <div id="queuePage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('queuePage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">ตรวจสอบคิวงาน</span>
+        <button class="copy-chip" onclick="fetchQueueData()"><i class="fa-solid fa-rotate-right"></i> รีเฟรช</button>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title">Check Q</div>
+          <div class="banner-desc">ติดตามสถานะคิวงานได้ที่นี่เลยน้า ❤️</div>
+        </div>
+
+        <div class="status-widget-grid">
+          <div class="status-widget-card">
+            <div class="widget-label">NEXT QUEUE</div>
+            <div class="widget-number" id="nextQueueDay">--</div>
+            <div class="widget-sub" id="nextQueueMonthYear">--- ----</div>
+          </div>
+          <div class="status-widget-card">
+            <div class="widget-label">คิวทั้งหมด</div>
+            <div class="widget-number" id="monthlyQueueCount">0</div>
+            <div class="widget-sub">คิวงาน</div>
+          </div>
+          <div class="status-widget-card">
+            <div class="widget-label">คิวก่อนหน้า</div>
+            <div class="widget-number" id="pendingQueueCount">0</div>
+            <div class="widget-sub">คิว</div>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs-wrap">
+          <button class="tab-filter-btn active" onclick="setQueueFilter('all', this)">🌸 ทั้งหมด</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('pending', this)">⏱ รอคิว</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('doing', this)">✨ กำลังทำ</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('done', this)">✅ เสร็จแล้ว</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('line', this)">💬 LINE</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('fb', this)">📘 FB</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('ig', this)">📸 IG</button>
+          <button class="tab-filter-btn" onclick="setQueueFilter('tiktok', this)">🎵 TikTok</button>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="queueSearchInput" class="search-input" onkeyup="filterQueue()" placeholder="พิมพ์ชื่อหรือรหัสคิว เช่น Q001, Q1,">
+          <button class="btn-action" onclick="filterQueue()"><i class="fa-solid fa-search"></i> ค้นหา</button>
+        </div>
+
+        <div id="queueListContainer"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: Parcel Tracking -->
+    <div id="trackingPage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('trackingPage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">เช็คเลขพัสดุ</span>
+        <button class="copy-chip" onclick="fetchParcelData()"><i class="fa-solid fa-rotate-right"></i> รีเฟรช</button>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title">Tracking</div>
+          <div class="banner-desc">ตรวจสอบสถานะการจัดส่งพัสดุ 📦✨</div>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="trackInput" class="search-input" onkeyup="filterParcels()" placeholder="ค้นหาเลขพัสดุ หรือชื่อผู้รับ...">
+          <button class="btn-action" onclick="filterParcels()"><i class="fa-solid fa-search"></i> ค้นหา</button>
+        </div>
+
+        <div id="parcelListContainer"></div>
+      </div>
+    </div>
+
+    <!-- PAGE: Reward Cards -->
+    <div id="rewardPage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('rewardPage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">บัตรสะสมแต้ม</span>
+        <button class="copy-chip" onclick="fetchRewardData()"><i class="fa-solid fa-rotate-right"></i> รีเฟรช</button>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title">Reward Card</div>
+          <div class="banner-desc">สะสมแต้มครบ 5 แต้ม แลกรับสิทธิ์ส่งฟรี 1 ครั้ง 🌷✨</div>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="phoneSearchInput" class="search-input" onkeyup="if(event.key==='Enter') checkCustomerPoints()" placeholder="กรอกเบอร์โทรศัพท์ (เช่น 0812345678)...">
+          <button class="btn-action" onclick="checkCustomerPoints()"><i class="fa-solid fa-search"></i> ตรวจสอบ</button>
+        </div>
+
+        <div id="rewardCardContainer" style="display:none; text-align:center;">
+          <div class="sub-card" style="padding:16px; border-radius:24px; border:2px dashed #fbb6ce;">
+            <img id="rewardCardImg" src="https://i.postimg.cc/SNp6vSDM/1.png" alt="Reward Card" style="width:100%; max-width:600px; height:auto; border-radius:18px; box-shadow:var(--shadow-soft); display:block; margin:0 auto;">
+            
+            <h4 id="rewardStatusText" style="font-family:var(--font-cute); font-size:20px; color:var(--accent-pink); margin-top:16px;"></h4>
+            <p id="rewardSubText" style="font-size:13.5px; color:var(--text-muted); margin-top:6px; line-height:1.5;"></p>
+            <h3 id="rewardCustomerName" style="font-family:var(--font-cute); font-size:22px; font-weight:700; color:var(--text-dark); margin-top:16px;"></h3>
+            <h4 id="rewardStatusText" style="font-family:var(--font-cute); font-size:18px; color:var(--accent-pink); margin-top:4px;"></h4>
+            <p id="rewardSubText" style="font-size:13.5px; color:var(--text-muted); margin-top:6px; line-height:1.5;"></p>
+
+
+            <div style="background:#fff7fb; border:1px solid #ffd8e6; border-radius:16px; padding:12px 16px; margin:14px auto 0 auto; max-width:560px; text-align:left;">
+              <div style="font-family:var(--font-cute); font-size:14.5px; font-weight:600; color:var(--accent-pink); display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                <i class="fa-solid fa-sparkles"></i> เงื่อนไขและของรางวัล
+              </div>
+              <ul style="font-size:12.5px; color:var(--text-dark); line-height:1.6; padding-left:18px;">
+                <li>สะสมครบ <b>5 แต้ม</b> แลกรับสิทธิ์ <b>ส่งฟรี 1 ครั้ง</b></li>
+                <li>ใช้ได้ 1 สิทธิ์ ต่อ 1 ยอดสั่งซื้อ</li>
+                <li>แต้มสะสมมีอายุ <b>6 เดือน</b> นับจากวันที่ได้รับแต้มแรก</li>
+              </ul>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:6px; text-align:center; border-top:1px dashed #f3d4e0; padding-top:6px;">
+                *หมดอายุแล้วจะไม่สามารถสะสมต่อได้น้า รีบมาใช้สิทธิ์กันนะคะ
+              </div>
+            </div>
+            
+            <div style="margin-top:16px;">
+              <a href="https://line.me/ti/p/~@491dlvmm" target="_blank" class="copy-chip" style="font-size:13px; padding:8px 20px;">
+                <i class="fa-brands fa-line"></i> ทักแชทแลกรับสิทธิ์
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: Reviews -->
+    <div id="reviewPage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('reviewPage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">รีวิว & เครดิต</span>
+        <div style="display:flex; gap:6px; z-index:2;">
+          <button class="copy-chip" onclick="fetchReviewData()"><i class="fa-solid fa-rotate-right"></i></button>
+          <button class="copy-chip" onclick="toggleReviewModal(true)">+ เขียนรีวิว</button>
+        </div>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title" style="display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span>Reviews</span>
+            <span style="font-size:20px; color:#ffb900;">★</span>
+            <span id="avgReviewScore" style="font-size:22px;">5.0</span>
+          </div>
+          <div class="banner-desc">จากทั้งหมด <span id="totalReviewCount">0</span> รีวิว • ขอบคุณทุก Feedback นะคะ 💖</div>
+        </div>
+
+        <div id="reviewFormCard" class="sub-card" style="display:none; background:#fffbfc; border:1.5px dashed #f5bfd5;">
+          <h5 style="font-family:var(--font-cute); font-size:15px; font-weight:600; margin-bottom:10px;"><i class="fa-solid fa-pen-nib"></i> เขียนความประทับใจ</h5>
+          <div class="form-group">
+            <label>ชื่อของคุณ</label>
+            <input type="text" id="revName" placeholder="เช่น ฟิว / น้องแพรว">
+          </div>
+
+          <div class="form-group">
+            <label>ให้คะแนน</label>
+            <div class="star-row" id="starContainer" style="display:flex; gap:6px; font-size:22px; color:#ffb900; cursor:pointer;">
+              <i class="fa-solid fa-star star-btn" onclick="setStar(1)"></i>
+              <i class="fa-solid fa-star star-btn" onclick="setStar(2)"></i>
+              <i class="fa-solid fa-star star-btn" onclick="setStar(3)"></i>
+              <i class="fa-solid fa-star star-btn" onclick="setStar(4)"></i>
+              <i class="fa-solid fa-star star-btn" onclick="setStar(5)"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>ข้อความรีวิว</label>
+            <textarea id="revComment" rows="3" placeholder="งานแฮนด์เมดน่ารักมาก งานจริงคิ้วท์สุดๆ แพ็กของมาดี แม่ค้าใส่ใจและใจดีมากเลยค่า 🌷✨"></textarea>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-action" id="submitReviewBtn" style="flex-grow:1;" onclick="submitReviewAction()">ส่งรีวิวความคิ้วท์ 💌</button>
+            <button class="copy-chip" onclick="toggleReviewModal(false)">ยกเลิก</button>
+          </div>
+        </div>
+
+        <div id="reviewFeed"></div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: Contact & Bank Info -->
+    <div id="contactPage" class="page-overlay">
+      <div class="overlay-header">
+        <button class="back-btn" onclick="closePage('contactPage')">
+          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+        </button>
+        <span class="overlay-title">ช่องทางการติดต่อ & ชำระเงิน</span>
+        <div style="width:50px"></div>
+      </div>
+      <div class="overlay-content">
+        <div class="page-banner-card">
+          <div class="banner-title">Contact & Payment</div>
+          <div class="banner-desc">กดแตะเปิดแอปเพื่อทักสั่งทำ หรือเช็คข้อมูลชำระเงินได้เลยค่ะ</div>
+        </div>
+
+        <div class="contact-item">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <i class="fa-brands fa-line" style="font-size:26px; color:#06c755;"></i>
+            <div>
+              <div style="font-family:var(--font-cute); font-size:15px; font-weight:600;">LINE Official</div>
+              <div style="font-size:12px; color:var(--text-muted);">@491dlvmm</div>
+            </div>
+          </div>
+          <a href="https://line.me/ti/p/~@491dlvmm" target="_blank" class="copy-chip">เปิด LINE</a>
+        </div>
+
+        <div class="contact-item">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <i class="fa-brands fa-facebook" style="font-size:26px; color:#1877f2;"></i>
+            <div>
+              <div style="font-family:var(--font-cute); font-size:15px; font-weight:600;">Facebook</div>
+              <div style="font-size:12px; color:var(--text-muted);">Jasmina</div>
+            </div>
+          </div>
+          <a href="https://www.facebook.com/share/1CN6VpJGN9/" target="_blank" class="copy-chip">เปิด Facebook</a>
+        </div>
+
+        <div class="contact-item">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <i class="fa-brands fa-instagram" style="font-size:26px; color:#e1306c;"></i>
+            <div>
+              <div style="font-family:var(--font-cute); font-size:15px; font-weight:600;">Instagram</div>
+              <div style="font-size:12px; color:var(--text-muted);">@bivivibe</div>
+            </div>
+          </div>
+          <a href="https://www.instagram.com/bivivibe?stkn=Zm9kdjU5ZDBia3Rh" target="_blank" class="copy-chip">เปิด IG</a>
+        </div>
+
+        <div class="contact-item">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <i class="fa-brands fa-tiktok" style="font-size:24px; color:#111111;"></i>
+            <div>
+              <div style="font-family:var(--font-cute); font-size:15px; font-weight:600;">TikTok</div>
+              <div style="font-size:12px; color:var(--text-muted);">@bivivibe</div>
+            </div>
+          </div>
+          <a href="https://www.tiktok.com/@bivivibe?_r=1&_t=ZS-99wBHMzbC9F" target="_blank" class="copy-chip">เปิด TikTok</a>
+        </div>
+
+        <div class="bank-payment-card">
+          <div class="bank-header-title">
+            <i class="fa-solid fa-qrcode"></i> BiviVibe BANK
+          </div>
+
+          <div class="qr-frame">
+            <img src="https://i.postimg.cc/cLCjzL55/Qr-Code.png" alt="Thai QR Payment">
+          </div>
+
+          <div class="bank-notice-box">
+            <div>🌸 เช็คชื่อบัญชีก่อนกดยืนยันโอนเงินนะคะ ทางร้านมีบัญชีเดียวเท่านั้นน้า 🌸</div>
+            <div style="margin-top:4px;">ชื่อบัญชี: <b>ฐิติรัตน์ แสงธรรมชัย</b> เท่านั้นนะค้า 💖</div>
+          </div>
+
+          <div class="bank-account-row">
+            <div class="bank-info-left">
+              <div class="bank-logo-badge" style="background:#138f2d;">KBANK</div>
+              <div class="bank-details">
+                <h5>ธนาคารกสิกรไทย</h5>
+                <p>080-8-90289-3</p>
+              </div>
+            </div>
+            <button class="copy-chip" onclick="copyText('080-8-90289-3')">
+              <i class="fa-regular fa-copy"></i> คัดลอก
+            </button>
+          </div>
+
+          <div class="bank-account-row">
+            <div class="bank-info-left">
+              <div class="bank-logo-badge" style="background:#113566;">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              </div>
+              <div class="bank-details">
+                <h5>พร้อมเพย์ (PromptPay)</h5>
+                <p>063-883-1737</p>
+              </div>
+            </div>
+            <button class="copy-chip" onclick="copyText('0638831737')">
+              <i class="fa-regular fa-copy"></i> คัดลอก
+            </button>
+          </div>
+
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:10px;">
+            *โอนเงินแล้วส่งสลิปหลักฐานทางแชท LINE ร้านได้เลยน้า 🌷
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ================= Config & Sheet IDs =================
+    const QUEUE_SHEET_ID = "1MWlD0TOX2-9kgc-7-L5erCBP6k0wHULo1NsCODStP9g";
+    const PARCEL_SHEET_ID = "1SK8xHuoXgvtlrDqEdk7ZYRvwv-MObi4a40N0u-lKxvY";
+    const REWARD_SHEET_ID = "1C9Jfsj6_89H721sAAUm3TXIZk6S-5PwELYeXeAsy7Sk";
+    const REWARD_TAB_NAME = ""; 
+
+    const stampCardImages = {
+      0: "https://i.postimg.cc/SNp6vSDM/1.png",
+      1: "https://i.postimg.cc/SNp6vSDM/1.png",
+      2: "https://i.postimg.cc/MK87F6dV/2.png",
+      3: "https://i.postimg.cc/Gh1F5LqY/3.png",
+      4: "https://i.postimg.cc/5NMBR4nz/4.png",
+      5: "https://i.postimg.cc/28fQKk27/5.png"
+    };
+
+    // URL สำหรับระบบรีวิว (Reviews BiviVibe โดยเฉพาะ)
+    const REVIEW_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8sOM5XWk5QdrtVzOBOsdTV9zi0wos82TdHTuFMd2h4qErc8f5tR2hgDJQzpegAHaxKg/exec";
+
+    let liveQueueList = [];
+    let liveParcelList = [];
+    let customerPointsList = [];
+    let currentQueueFilter = "all";
+    let currentRating = 5;
+
+    const fallbackAvatars = [
+      "https://i.postimg.cc/ZW7PPmt7/IMG-5449.png",
+      "https://i.postimg.cc/xXxGGQD5/IMG-5450.jpg",
+      "https://i.postimg.cc/CRPCC0Tm/IMG-5451.jpg"
+    ];
+
+    let localReviewList = [];
+
+    // ================= JSONP & Queue Data =================
+    function loadJSONP(url) {
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+      script.onload = function() { script.remove(); };
+      script.onerror = function() {
+        console.error("Failed to load script:", url);
+        script.remove();
+      };
+    }
+
+    function updateCalendarQueue() {
+      const now = new Date();
+      const day = now.getDate();
+      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const month = monthNames[now.getMonth()];
+      const year = now.getFullYear();
+
+      const dayElem = document.getElementById("nextQueueDay");
+      const monthYearElem = document.getElementById("nextQueueMonthYear");
+
+      if (dayElem) dayElem.textContent = day;
+      if (monthYearElem) monthYearElem.textContent = month + " " + year;
+    }
+
+    function fetchQueueData() {
+      const container = document.getElementById("queueListContainer");
+      if (container) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 🌷 กำลังเปิดสมุดคิวงาน... รอแป๊บเดียวนะค้าบ ✨</div>';
+      }
+      const url = "https://docs.google.com/spreadsheets/d/" + QUEUE_SHEET_ID + "/gviz/tq?tqx=responseHandler:handleQueueResponse&_t=" + new Date().getTime();
+      loadJSONP(url);
+    }
+
+    window.handleQueueResponse = function(data) {
+      const container = document.getElementById("queueListContainer");
+      try {
+        if (!data || !data.table || !data.table.rows || data.table.rows.length === 0) {
+          if (container) container.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);"><i class="fa-solid fa-circle-info"></i> ในแผ่นงานแรกของชีทยังไม่มีข้อมูลค่ะ 🌷</div>';
+          return;
+        }
+
+        const rawRows = data.table.rows;
+        liveQueueList = [];
+
+        rawRows.forEach(function(r) {
+          if (!r || !r.c) return;
+          
+          const cells = r.c.map(function(cell) {
+            if (!cell) return "";
+            if (cell.f !== null && cell.f !== undefined) return String(cell.f).trim();
+            if (cell.v !== null && cell.v !== undefined) return String(cell.v).trim();
+            return "";
+          });
+          if (cells.every(val => val === "")) return;
+
+          const rowStr = cells.join(" ");
+          if (rowStr.indexOf("รหัสคิว") !== -1 || rowStr.indexOf("ชื่อลูกค้า") !== -1 || rowStr.indexOf("ระยะเวลาทำ") !== -1) return;
+
+          let code = cells[1] || "";
+          let name = cells[2] || "";
+          let jobType = cells[3] || "";
+          let job = cells[4] || "";
+          let platform = cells[5] || "";
+          let qty = cells[6] || "";
+          let rawStatus = cells[7] || "";
+          
+          let rawDate = cells[9] || "";
+          let cleanDate = "";
+
+          if (rawDate) {
+            const matchDate = rawDate.match(/Date\((\d+),(\d+),(\d+)/i);
+            if (matchDate) {
+              const y = parseInt(matchDate[1], 10);
+              const m = parseInt(matchDate[2], 10) + 1;
+              const d = parseInt(matchDate[3], 10);
+              const thaiYear = y < 2400 ? y + 543 : y;
+              cleanDate = (d < 10 ? "0" + d : d) + "/" + (m < 10 ? "0" + m : m) + "/" + thaiYear;
+            } else {
+              cleanDate = rawDate.replace(/\s+\d{1,2}:\d{2}(:\d{2})?.*$/, "").trim();
+            }
+          }
+
+          if (!code && !name) return;
+
+          let status = "รอคิว";
+          const stLower = rawStatus.toLowerCase();
+          if (stLower.indexOf("เสร็จ") !== -1 || stLower.indexOf("เรียบร้อย") !== -1 || stLower.indexOf("done") !== -1) {
+            status = "เสร็จแล้ว";
+          } else if (stLower.indexOf("กำลัง") !== -1 || stLower.indexOf("ทำ") !== -1 || stLower.indexOf("doing") !== -1) {
+            status = "กำลังทำ";
+          } else {
+            status = "รอคิว";
+          }
+
+          liveQueueList.push({
+            code: code,
+            name: name,
+            jobType: jobType,
+            job: job,
+            platform: platform,
+            qty: qty,
+            status: status,
+            date: cleanDate
+          });
+        });
+
+        liveQueueList.reverse();
+
+        const pendingCount = liveQueueList.filter(item => item.status !== "เสร็จแล้ว").length;
+        const countElem = document.getElementById("pendingQueueCount");
+        if (countElem) countElem.textContent = pendingCount;
+
+        const monthlyElem = document.getElementById("monthlyQueueCount");
+        if (monthlyElem) monthlyElem.textContent = liveQueueList.length;
+
+        filterQueue();
+      } catch (err) {
+        console.error("Queue process error:", err);
+        if (container) container.innerHTML = '<div style="text-align:center; padding:20px; font-size:13px; color:#c85a7a;">เกิดข้อผิดพลาดในการประมวลผลข้อมูลคิวงาน</div>';
+      }
+    };
+
+    function renderQueue(items) {
+      const container = document.getElementById("queueListContainer");
+      if (!container) return;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);">ไม่พบข้อมูลคิวงานที่ค้นหาค่ะ 🌷</div>';
+        return;
+      }
+
+      let html = "";
+      items.forEach(function(q) {
+        let statusClass = "pending";
+        let statusIcon = '<i class="fa-regular fa-clock"></i>';
+        if (q.status === "เสร็จแล้ว") {
+          statusClass = "done";
+          statusIcon = '<i class="fa-solid fa-check"></i>';
+        } else if (q.status === "กำลังทำ") {
+          statusClass = "doing";
+          statusIcon = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        }
+
+        let platformTag = "";
+        if (q.platform) {
+          const p = q.platform.toUpperCase();
+          let pClass = "platform-other";
+          let icon = '<i class="fa-solid fa-tag"></i>';
+          if (p === "LINE") { pClass = "platform-line"; icon = '<i class="fa-brands fa-line"></i>'; }
+          else if (p === "FB" || p.indexOf("FACEBOOK") !== -1) { pClass = "platform-fb"; icon = '<i class="fa-brands fa-facebook"></i>'; }
+          else if (p === "IG" || p.indexOf("INSTAGRAM") !== -1) { pClass = "platform-ig"; icon = '<i class="fa-brands fa-instagram"></i>'; }
+          else if (p === "TIKTOK") { pClass = "platform-tiktok"; icon = '<i class="fa-brands fa-tiktok"></i>'; }
+          else if (p === "X") { pClass = "platform-x"; icon = '<i class="fa-brands fa-x-twitter"></i>'; }
+
+          platformTag = `<span class="platform-badge ${pClass}">${icon} ${q.platform}</span>`;
+        }
+
+        let detailParts = [];
+        if (q.name) detailParts.push(q.name);
+        if (q.jobType) detailParts.push(q.jobType);
+        if (q.job) detailParts.push(q.job);
+
+        let jobDetailText = detailParts.join(" • ");
+        if (q.qty && q.qty !== "0") {
+          jobDetailText += ` (จำนวน ${q.qty} ชิ้น)`;
+        }
+
+        let shortCode = q.code.replace(/^Q0+/, "Q");
+
+        html += '<div class="queue-item-card">' +
+          '<div class="q-left-wrap">' +
+            '<div class="q-badge-circle">' + shortCode + '</div>' +
+            '<div class="q-main-info">' +
+              '<div class="q-client-name">' +
+                '<span class="q-client-plain-name">' + q.code + '</span>' +
+                platformTag +
+              '</div>' +
+              '<div class="q-job-desc">' + jobDetailText + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="q-right-wrap">' +
+            (q.date ? '<span class="q-date-pill"><i class="fa-regular fa-calendar-days"></i> ' + q.date + '</span>' : '') +
+            '<span class="q-status-pill ' + statusClass + '">' + statusIcon + ' ' + q.status + '</span>' +
+          '</div>' +
+        '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function setQueueFilter(type, btnElem) {
+      currentQueueFilter = type;
+      document.querySelectorAll(".tab-filter-btn").forEach(function(b) {
+        b.classList.remove("active");
+      });
+      btnElem.classList.add("active");
+      filterQueue();
+    }
+
+    function filterQueue() {
+      const input = document.getElementById("queueSearchInput");
+      const rawQuery = (input ? input.value : "").trim().toLowerCase();
+      const cleanQuery = rawQuery.replace(/^q0*/, "");
+
+      const filtered = liveQueueList.filter(function(item) {
+        const itemCode = (item.code || "").toLowerCase();
+        const cleanItemCode = itemCode.replace(/^q0*/, "");
+        const itemName = (item.name || "").toLowerCase();
+        const itemStatus = (item.status || "").toLowerCase();
+        const itemPlatform = (item.platform || "").toLowerCase();
+        const itemJob = (item.job || "").toLowerCase();
+        const itemJobType = (item.jobType || "").toLowerCase();
+
+        const matchSearch = !rawQuery || 
+                            itemCode.indexOf(rawQuery) !== -1 || 
+                            cleanItemCode === cleanQuery || 
+                            itemName.indexOf(rawQuery) !== -1 ||
+                            itemJob.indexOf(rawQuery) !== -1 ||
+                            itemJobType.indexOf(rawQuery) !== -1;
+
+        let matchTab = true;
+        if (currentQueueFilter === "pending") {
+          matchTab = itemStatus.indexOf("รอ") !== -1;
+        } else if (currentQueueFilter === "doing") {
+          matchTab = itemStatus.indexOf("กำลัง") !== -1;
+        } else if (currentQueueFilter === "done") {
+          matchTab = itemStatus.indexOf("เสร็จ") !== -1;
+        } else if (currentQueueFilter === "line") {
+          matchTab = itemPlatform.indexOf("line") !== -1;
+        } else if (currentQueueFilter === "fb") {
+          matchTab = itemPlatform.indexOf("fb") !== -1;
+        } else if (currentQueueFilter === "ig") {
+          matchTab = itemPlatform.indexOf("ig") !== -1;
+        } else if (currentQueueFilter === "tiktok") {
+          matchTab = itemPlatform.indexOf("tiktok") !== -1;
+        }
+
+        return matchSearch && matchTab;
+      });
+
+      renderQueue(filtered);
+    }
+
+    // ================= Parcel Tracking =================
+    function fetchParcelData() {
+      const container = document.getElementById("parcelListContainer");
+      if (container) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 📦 กำลังส่องกล่องพัสดุ... รอสักครู่น้า 🚚💨</div>';
+      }
+      const url = "https://docs.google.com/spreadsheets/d/" + PARCEL_SHEET_ID + "/gviz/tq?tqx=responseHandler:handleParcelResponse&_t=" + new Date().getTime();
+      loadJSONP(url);
+    }
+
+    window.handleParcelResponse = function(data) {
+      const container = document.getElementById("parcelListContainer");
+      try {
+        if (!data || !data.table || !data.table.rows || data.table.rows.length === 0) {
+          if (container) container.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);"><i class="fa-solid fa-circle-info"></i> ในแผ่นงานแรกของชีทยังไม่มีข้อมูลพัสดุค่ะ 📦</div>';
+          return;
+        }
+
+        const rawRows = data.table.rows;
+        liveParcelList = [];
+
+        rawRows.forEach(function(r) {
+          if (!r || !r.c) return;
+          const cells = r.c.map(function(cell) {
+            return (cell && (cell.v !== null && cell.v !== undefined || cell.f)) ? String(cell.f || cell.v).trim() : "";
+          });
+          if (cells.every(val => val === "")) return;
+
+          const rowStr = cells.join(" ");
+          if (rowStr.indexOf("เลขพัสดุ") !== -1 || rowStr.indexOf("Tracking") !== -1 || rowStr.indexOf("ขนส่ง") !== -1) return;
+
+          const nonEmpty = cells.filter(c => c !== "");
+          const code = nonEmpty[0] || "-";
+          const customer = nonEmpty[1] || "";
+          const courier = nonEmpty[2] || "ขนส่งพัสดุ";
+          const date = nonEmpty[3] || "อัปเดตล่าสุด";
+          let status = "อยู่ระหว่างจัดส่ง";
+          let detail = nonEmpty[5] || nonEmpty[4] || "พัสดุกำลังนำส่งไปยังปลายทาง";
+
+          for (let i = 0; i < cells.length; i++) {
+            const vLower = cells[i].toLowerCase();
+            if (vLower.indexOf("สำเร็จ") !== -1 || vLower.indexOf("นำจ่าย") !== -1 || vLower.indexOf("delivered") !== -1 || vLower.indexOf("เรียบร้อย") !== -1) {
+              status = "จัดส่งสำเร็จ";
+              break;
+            }
+          }
+
+          liveParcelList.push({ code: code, customer: customer, courier: courier, date: date, status: status, detail: detail });
+        });
+
+        renderParcels(liveParcelList);
+      } catch (err) {
+        console.error("Parcel process error:", err);
+        if (container) container.innerHTML = '<div style="text-align:center; padding:20px; font-size:13px; color:#c85a7a;">เกิดข้อผิดพลาดในการประมวลผลข้อมูลพัสดุ</div>';
+      }
+    };
+
+    function renderParcels(items) {
+      const container = document.getElementById("parcelListContainer");
+      const input = document.getElementById("trackInput");
+      const query = (input ? input.value : "").trim().toLowerCase();
+
+      if (!items || items.length === 0) {
+        if (container) {
+          container.innerHTML = '<div class="sub-card" style="text-align:center; padding: 24px 12px;">' +
+            '<div style="font-size:32px; color:var(--accent-pink); margin-bottom:8px;"><i class="fa-solid fa-box-open"></i></div>' +
+            '<h5 style="font-family:var(--font-cute); font-size:16px; font-weight:600; color:var(--text-dark);">ไม่พบข้อมูลพัสดุ "' + query + '"</h5>' +
+            '<p style="font-size:12px; color:var(--text-muted); margin: 6px 0 16px 0;">สามารถกดคลิกเพื่อตรวจเช็คกับระบบขนส่งโดยตรงได้เลยค่ะ</p>' +
+            '<div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">' +
+              '<a href="https://www.flashexpress.co.th/tracking/?se=' + encodeURIComponent(query) + '" target="_blank" class="copy-chip">' +
+                '<i class="fa-solid fa-bolt"></i> Flash Express' +
+              '</a>' +
+              '<a href="https://th.kerryexpress.com/th/track/?track=' + encodeURIComponent(query) + '" target="_blank" class="copy-chip">' +
+                '<i class="fa-solid fa-truck"></i> Kerry Express' +
+              '</a>' +
+              '<a href="https://track.thailandpost.co.th/?trackNumber=' + encodeURIComponent(query) + '" target="_blank" class="copy-chip">' +
+                '<i class="fa-solid fa-envelope"></i> ไปรษณีย์ไทย' +
+              '</a>' +
+              '<a href="https://www.jtexpress.co.th/trajectoryQuery?bills=' + encodeURIComponent(query) + '" target="_blank" class="copy-chip">' +
+                '<i class="fa-solid fa-dolly"></i> J&T Express' +
+              '</a>' +
+            '</div>' +
+          '</div>';
+        }
+        return;
+      }
+
+      let html = "";
+      items.forEach(function(item) {
+        let badgeClass = "status-doing";
+        const st = (item.status || "").toLowerCase();
+        if (st.indexOf("สำเร็จ") !== -1 || st.indexOf("นำจ่าย") !== -1 || st.indexOf("delivered") !== -1) {
+          badgeClass = "status-done";
+        }
+
+        html += '<div class="sub-card">' +
+          '<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
+            '<div>' +
+              '<h5 style="font-family:var(--font-cute); font-size:16px; font-weight:600; color:var(--text-dark);">' +
+                item.code +
+                (item.customer ? '<span style="font-size:13px; font-weight:normal; color:var(--accent-pink);"> (' + item.customer + ')</span>' : '') +
+              '</h5>' +
+              '<p style="font-size:12px; color:var(--text-muted); margin-top:2px;">ขนส่ง: ' + item.courier + '</p>' +
+            '</div>' +
+            '<span class="status-tag ' + badgeClass + '">' + item.status + '</span>' +
+          '</div>' +
+          '<div class="timeline">' +
+            '<div class="timeline-item">' +
+              '<div class="timeline-dot"></div>' +
+              '<div class="timeline-time">' + item.date + '</div>' +
+              '<div style="font-weight:600; color:var(--text-dark);">' + item.detail + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      if (container) container.innerHTML = html;
+    }
+
+    function filterParcels() {
+      const input = document.getElementById("trackInput");
+      const query = (input ? input.value : "").trim().toLowerCase();
+      if (!query) {
+        renderParcels(liveParcelList);
+        return;
+      }
+
+      const filtered = liveParcelList.filter(function(item) {
+        return (item.code || "").toLowerCase().indexOf(query) !== -1 || (item.customer || "").toLowerCase().indexOf(query) !== -1;
+      });
+      renderParcels(filtered);
+    }
+
+// ================= Reward System =================
+    function fetchRewardData() {
+      const sheetParam = REWARD_TAB_NAME ? "&sheet=" + encodeURIComponent(REWARD_TAB_NAME) : "";
+      const url = "https://docs.google.com/spreadsheets/d/" + REWARD_SHEET_ID + "/gviz/tq?" + sheetParam + "&tqx=responseHandler:handleRewardResponse&_t=" + new Date().getTime();
+      loadJSONP(url);
+    }
+
+    window.handleRewardResponse = function(data) {
+      try {
+        if (!data || !data.table || !data.table.rows) return;
+        customerPointsList = [];
+        
+        data.table.rows.forEach(function(r) {
+          if (!r || !r.c) return;
+          
+          let rowValues = r.c.map(function(cell) {
+            return (cell && (cell.v !== null && cell.v !== undefined || cell.f)) ? String(cell.f || cell.v).trim() : "";
+          });
+
+          if (rowValues.join("").indexOf("เบอร์") !== -1 || rowValues.join("").indexOf("รหัส") !== -1) return;
+
+          let foundPhone = "";
+          let foundName = "";
+          let foundPoints = 0;
+          let startDateStr = "";
+
+          // ค้นหาเบอร์โทร
+          for (let i = 0; i < rowValues.length; i++) {
+            let digits = rowValues[i].replace(/\D/g, "");
+            if (digits.length === 9 || digits.length === 10) {
+              foundPhone = digits.length === 9 ? "0" + digits : digits;
+              break;
+            }
+          }
+
+          // ค้นหาชื่อลูกค้า (ข้อความที่ไม่ใช่ตัวเลขล้วน และไม่ใช่วันที่)
+          for (let i = 0; i < rowValues.length; i++) {
+            let val = rowValues[i];
+            let digits = val.replace(/\D/g, "");
+            if (val && digits.length < 5 && !/^\d{1,4}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(val) && isNaN(Number(val))) {
+              foundName = val;
+              break;
+            }
+          }
+
+          // ค้นหาแต้ม (ตัวเลข 1-5)
+          for (let i = 0; i < rowValues.length; i++) {
+            let val = parseInt(rowValues[i], 10);
+            if (!isNaN(val) && val >= 1 && val <= 5 && rowValues[i].replace(/\D/g, "").length <= 2) {
+              foundPoints = val;
+              break;
+            }
+          }
+
+          // ค้นหาวันที่
+          for (let i = 0; i < rowValues.length; i++) {
+            if (/^\d{1,4}[\/\-]\d{1,2}[\/\-]\d{2,4}$/.test(rowValues[i])) {
+              startDateStr = rowValues[i];
+              break;
+            }
+          }
+
+          if (foundPhone) {
+            customerPointsList.push({ 
+              phone: foundPhone,
+              name: foundName,
+              points: foundPoints, 
+              startDate: startDateStr 
+            });
+          }
+        });
+      } catch(e) {
+        console.error("Reward load error:", e);
+      }
+    };
+
+    function checkCustomerPoints() {
+      const input = document.getElementById("phoneSearchInput");
+      let queryPhone = (input ? input.value : "").trim().replace(/\D/g, "");
+      const container = document.getElementById("rewardCardContainer");
+      const cardImg = document.getElementById("rewardCardImg");
+      const nameElem = document.getElementById("rewardCustomerName");
+      const title = document.getElementById("rewardStatusText");
+      const sub = document.getElementById("rewardSubText");
+
+      if (!queryPhone) {
+        alert("กรุณากรอกเบอร์โทรศัพท์ก่อนนะคะ 🌷");
+        return;
+      }
+
+      if (queryPhone.length === 9) {
+        queryPhone = "0" + queryPhone;
+      }
+
+      const found = customerPointsList.find(function(c) { 
+        return c.phone === queryPhone || c.phone.endsWith(queryPhone) || queryPhone.endsWith(c.phone); 
+      });
+
+      container.style.display = "block";
+
+      if (found) {
+        // แสดงชื่อลูกค้า
+        if (nameElem) {
+          nameElem.textContent = found.name ? `🌸 คุณ ${found.name}` : "";
+        }
+
+        const pts = Math.min(Math.max(found.points, 1), 5);
+        let isExpired = false;
+        let expireDateText = "";
+
+        if (found.startDate) {
+          let parts = found.startDate.split(/[\/\-]/);
+          let startD;
+          if (parts[0].length === 4) {
+            startD = new Date(parts[0], parts[1] - 1, parts[2]);
+          } else {
+            startD = new Date(parts[2], parts[1] - 1, parts[0]);
+          }
+
+          if (!isNaN(startD.getTime())) {
+            let expireD = new Date(startD);
+            expireD.setMonth(expireD.getMonth() + 6);
+
+            const now = new Date();
+            if (now > expireD) {
+              isExpired = true;
+            }
+            expireDateText = expireD.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" });
+          }
+        }
+
+        if (isExpired) {
+          cardImg.src = stampCardImages[1];
+          title.textContent = "บัตรสะสมแต้มนี้หมดอายุแล้ว 🥺";
+          title.style.color = "#a46d1b";
+          sub.innerHTML = `แต้มสะสมเดิมหมดอายุเมื่อวันที่ <b>${expireDateText}</b> (ครบ 6 เดือนแล้ว)<br>สามารถเริ่มสะสมแต้มรอบใหม่ได้ในการสั่งซื้อครั้งถัดไปนะคะ 🌷`;
+        } else {
+          cardImg.src = stampCardImages[pts];
+          title.textContent = "คุณมีแต้มสะสม: " + pts + " / 5 แต้ม 💖";
+          title.style.color = "var(--accent-pink)";
+
+          let dateNotice = expireDateText ? `<br><span style="font-size:12px; color:var(--text-muted);">⏳ บัตรนี้ใช้ได้ถึงวันที่: <b>${expireDateText}</b> (6 เดือนนับจากแต้มแรก)</span>` : "";
+
+          if (pts >= 5) {
+            sub.innerHTML = `🎉 <b>ยินดีด้วยค่ะ! สะสมครบ 5 แต้มเต็มแล้ว</b><br>ทักแชทร้านเพื่อรับสิทธิ์ส่งฟรีได้เลยน้า 🎁✨${dateNotice}`;
+          } else {
+            sub.innerHTML = `สะสมอีกเพียง ${5 - pts} แต้ม จะได้รับสิทธิ์ส่งฟรีจากทางร้านแล้วน้า สู้ๆ ค่ะ${dateNotice}`;
+          }
+        }
+      } else {
+        if (nameElem) nameElem.textContent = "";
+        cardImg.src = stampCardImages[1];
+        title.textContent = "ยังไม่พบประวัติการสะสมแต้มของเบอร์นี้";
+        title.style.color = "var(--accent-pink)";
+        sub.textContent = "สั่งทำสินค้ากับทางร้านเพื่อเริ่มต้นสะสมแต้มความน่ารักได้เลยนะคะ 🌷";
+      }
+    }
+
+    // ================= Reviews System =================
+    function fetchReviewData() {
+      const feed = document.getElementById("reviewFeed");
+      if (feed && (!localReviewList || localReviewList.length === 0)) {
+        feed.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดรีวิวความคิ้วท์... 🌷</div>';
+      }
+
+      const cbName = "review_cb_" + new Date().getTime();
+      window[cbName] = function(data) {
+        if (Array.isArray(data)) {
+          localReviewList = data;
+          renderLocalReviews();
+        }
+        delete window[cbName];
+      };
+
+      const url = REVIEW_SCRIPT_URL + "?callback=" + cbName + "&_nocache=" + Math.random();
+      loadJSONP(url);
+    }
+
+    function renderLocalReviews() {
+      const feed = document.getElementById("reviewFeed");
+      if (!feed) return;
+
+      if (!localReviewList || localReviewList.length === 0) {
+        feed.innerHTML = '<div style="text-align:center; padding:24px; font-size:13px; color:var(--text-muted);">ยังไม่มีข้อความรีวิวเข้ามาค่ะ 🌷</div>';
+        return;
+      }
+
+      let totalScore = 0;
+      let html = "";
+
+      localReviewList.forEach(function(item, idx) {
+        const score = item.score || 5;
+        totalScore += score;
+        const starCount = Math.min(Math.max(score, 1), 5);
+        const starText = "★".repeat(starCount) + "☆".repeat(5 - starCount);
+
+        const avatarSrc = fallbackAvatars[idx % fallbackAvatars.length];
+
+        html += '<div class="review-item-card">' +
+          '<div class="review-avatar">' +
+            '<img src="' + avatarSrc + '" alt="Review Avatar">' +
+          '</div>' +
+          '<div class="review-body">' +
+            '<div class="review-header-row">' +
+              '<span class="review-user-name">' + item.name + '</span>' +
+              '<span class="review-stars">' + starText + '</span>' +
+            '</div>' +
+            '<div class="review-comment-text">' + item.comment + '</div>' +
+            (item.date ? '<div style="font-size:11px; color:var(--text-muted); margin-top:4px;">' + item.date + '</div>' : '') +
+          '</div>' +
+        '</div>';
+      });
+
+      feed.innerHTML = html;
+
+      const count = localReviewList.length;
+      const avg = count > 0 ? (totalScore / count).toFixed(1) : "5.0";
+
+      const scoreElem = document.getElementById("avgReviewScore");
+      const countElem = document.getElementById("totalReviewCount");
+      if (scoreElem) scoreElem.textContent = avg;
+      if (countElem) countElem.textContent = count;
+    }
+
+    function submitReviewAction() {
+      const nameInput = document.getElementById("revName");
+      const commentInput = document.getElementById("revComment");
+      const name = nameInput.value.trim() || "ลูกค้าไม่ระบุนาม";
+      const comment = commentInput.value.trim();
+      const submitBtn = document.getElementById("submitReviewBtn");
+
+      if (!comment) {
+        alert("กรุณากรอกข้อความรีวิวด้วยนะคะ 🌷");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังส่ง...';
+
+      const now = new Date();
+      const newDate = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + (now.getFullYear() + 543);
+
+      const newReview = {
+        name: name,
+        date: newDate,
+        score: currentRating,
+        comment: comment
+      };
+
+      localReviewList.unshift(newReview);
+      renderLocalReviews();
+
+      fetch(REVIEW_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(newReview)
+      }).then(function() {
+        showToast("ขอบคุณสำหรับรีวิวนะค้าบ ทุกคำชมเป็นกำลังใจให้ร้านมากๆ เลยน้า 💖");
+        nameInput.value = "";
+        commentInput.value = "";
+        toggleReviewModal(false);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "ส่งรีวิวความคิ้วท์ 💌";
+        setTimeout(fetchReviewData, 1500);
+      }).catch(function(err) {
+        console.error("Submit review error:", err);
+        showToast("ขอบคุณสำหรับรีวิวค่ะ 💖");
+        nameInput.value = "";
+        commentInput.value = "";
+        toggleReviewModal(false);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "ส่งรีวิวความคิ้วท์ 💌";
+      });
+    }
+
+    function setStar(count) {
+      currentRating = count;
+      const stars = document.querySelectorAll(".star-btn");
+      stars.forEach(function(s, idx) {
+        s.style.color = idx < count ? "#ffb900" : "#e0d4d9";
+      });
+    }
+
+    function toggleReviewModal(show) {
+      const formCard = document.getElementById("reviewFormCard");
+      if (formCard) formCard.style.display = show ? "block" : "none";
+    }
+
+    // ================= Music Player =================
+    const playlist = [
+      { title: "Igloo 🍦", url: "Igloo.mp3" },
+      { title: "Spicy - aespa 🔥", url: "Spicy.mp3" },
+      { title: "SUGAR HONNEY ICE TEA 🍯", url: "SUGAR HONNEY ICE TEA.mp3" },
+      { title: "Lips Hips Kiss 💋", url: "Lips Hips Kiss.mp3" },
+      { title: "Really Like You ✨", url: "Really Like You.mp3" },
+      { title: "Sour Grapes 🍇", url: "Sour Grapes.mp3" },
+      { title: "Thirsty - aespa 🌊", url: "Thirsty.mp3" },
+      { title: "Ditto - NewJeans 🎧", url: "Ditto.mp3" },
+      { title: "OMG - NewJeans 💖", url: "Omg.mp3" }
+    ];
+
+    let currentSongIndex = 0;
+    const audio = document.getElementById("bgAudio");
+    if (audio) audio.volume = 0.1;
+
+    const playIcon = document.getElementById("playIcon");
+    const songTitleElem = document.getElementById("songTitle");
+    const statusTextElem = document.getElementById("statusText");
+    const musicCard = document.getElementById("musicCard");
+    const vinylDisc = document.getElementById("vinylDisc");
+
+    function loadSong(index) {
+      if (!audio) return;
+      currentSongIndex = index;
+      audio.src = playlist[currentSongIndex].url;
+      if (songTitleElem) songTitleElem.textContent = playlist[currentSongIndex].title;
+    }
+
+    function togglePlayMusic() {
+      if (!audio) return;
+      if (audio.paused) {
+        audio.play().then(function() {
+          if (playIcon) playIcon.className = "fa-solid fa-pause";
+          if (statusTextElem) statusTextElem.textContent = "กำลังเล่น...";
+          if (musicCard) musicCard.classList.add("playing");
+          if (vinylDisc) vinylDisc.classList.add("playing");
+          showToast("กำลังเล่น: " + playlist[currentSongIndex].title);
+        }).catch(function(err) {
+          console.log(err);
+          showToast("ไม่พบไฟล์เพลง กรุณาตรวจสอบชื่อไฟล์ในโฟลเดอร์นะคะ");
+        });
+      } else {
+        audio.pause();
+        if (playIcon) playIcon.className = "fa-solid fa-play";
+        if (statusTextElem) statusTextElem.textContent = "หยุดชั่วคราว";
+        if (musicCard) musicCard.classList.remove("playing");
+        if (vinylDisc) vinylDisc.classList.remove("playing");
+      }
+    }
+
+    function nextSong() {
+      if (!audio) return;
+      currentSongIndex = (currentSongIndex + 1) % playlist.length;
+      loadSong(currentSongIndex);
+      audio.play().then(function() {
+        if (playIcon) playIcon.className = "fa-solid fa-pause";
+        if (statusTextElem) statusTextElem.textContent = "กำลังเล่น...";
+        if (musicCard) musicCard.classList.add("playing");
+        if (vinylDisc) vinylDisc.classList.add("playing");
+        showToast("เล่นเพลง: " + playlist[currentSongIndex].title);
+      }).catch(function(err) { console.log(err); });
+    }
+
+    function prevSong() {
+      if (!audio) return;
+      currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+      loadSong(currentSongIndex);
+      audio.play().then(function() {
+        if (playIcon) playIcon.className = "fa-solid fa-pause";
+        if (statusTextElem) statusTextElem.textContent = "กำลังเล่น...";
+        if (musicCard) musicCard.classList.add("playing");
+        if (vinylDisc) vinylDisc.classList.add("playing");
+        showToast("เล่นเพลง: " + playlist[currentSongIndex].title);
+      }).catch(function(err) { console.log(err); });
+    }
+
+    function adjustVolume(amount) {
+      if (!audio) return;
+      let newVol = audio.volume + amount;
+      if (newVol > 1) newVol = 1;
+      if (newVol < 0) newVol = 0;
+      audio.volume = Math.round(newVol * 100) / 100;
+      showToast("ระดับเสียง: " + Math.round(audio.volume * 100) + "% 🎵");
+    }
+
+    if (audio) audio.addEventListener("ended", nextSong);
+
+    // ================= Utils =================
+    function openPage(pageId) { 
+      const page = document.getElementById(pageId);
+      if (page) {
+        page.classList.add("active");
+        document.body.classList.add("modal-open");
+      }
+    }
+
+    function closePage(pageId) { 
+      const page = document.getElementById(pageId);
+      if (page) {
+        page.classList.remove("active");
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    function filterCatalog(category, btnElement) {
+      document.querySelectorAll("#servicesPage .cat-btn").forEach(function(btn) {
+        btn.style.background = "#fff";
+        btn.style.borderColor = "#fed2e2";
+      });
+      btnElement.style.background = "var(--pastel-pink)";
+      btnElement.style.borderColor = "var(--accent-pink)";
+
+      const sections = document.querySelectorAll("#servicesPage .category-section");
+      sections.forEach(function(sec) {
+        if (category === "all" || sec.getAttribute("data-cat") === category) {
+          sec.style.display = "block";
+        } else {
+          sec.style.display = "none";
+        }
+      });
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function() {
+          showToast('คัดลอกข้อมูลเรียบร้อยแล้วค่ะ 💕');
+        }).catch(function() {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast('คัดลอกข้อมูลเรียบร้อยแล้วค่ะ 💕');
+      } catch (err) {
+        console.error('Copy error:', err);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const toastText = document.getElementById("toastText");
+      if (toast && toastText) {
+        toastText.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function() { toast.classList.remove("show"); }, 2500);
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, "0");
+      const mins = String(now.getMinutes()).padStart(2, "0");
+      const elem = document.getElementById("clockTime");
+      if (elem) elem.textContent = hrs + ":" + mins;
+    }
+
+    window.addEventListener("DOMContentLoaded", function() {
+      loadSong(0);
+      updateCalendarQueue();
+      fetchQueueData();
+      fetchParcelData();
+      fetchRewardData();
+      fetchReviewData();
+      setInterval(updateClock, 1000);
+      updateClock();
+    });
+  </script>
+</body>
+</html>
