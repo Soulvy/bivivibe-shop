@@ -1143,21 +1143,10 @@
       <p class="profile-subtitle">งานแฮนด์เมด • ลูกปัด • กิ๊บติดชื่อ • ลวดกำมะหยี่สุดคิ้วท์ 🌷</p>
     </div>
 
-    <!-- Navigation Menu -->
+<!-- Navigation Menu -->
     <div class="menu-list">
-      <button class="menu-item-btn" onclick="openPage('servicesPage')">
-        <div class="menu-left">
-          <div class="menu-icon-box" style="background:var(--pastel-pink); color:var(--accent-pink);">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </div>
-          <div class="menu-info">
-            <h4>รายการสินค้า (Catalog)</h4>
-            <p>ดูผลงานตัวอย่าง ลูกปัด กิ๊บติดชื่อ ลวดกำมะหยี่</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right menu-chevron"></i>
-      </button>
-            <button class="menu-item-btn" onclick="openPage('contactPage')">
+      <!-- เมนูช่องทางการติดต่อ & ชำระเงิน (ย้ายมาไว้บนสุด) -->
+      <button class="menu-item-btn" onclick="openPage('contactPage')">
         <div class="menu-left">
           <div class="menu-icon-box" style="background:var(--pastel-purple); color:var(--accent-purple);">
             <i class="fa-solid fa-address-book"></i>
@@ -1170,12 +1159,26 @@
         <i class="fa-solid fa-chevron-right menu-chevron"></i>
       </button>
 
+      <!-- เมนูรายการสินค้า -->
+      <button class="menu-item-btn" onclick="openPage('servicesPage')">
+        <div class="menu-left">
+          <div class="menu-icon-box" style="background:var(--pastel-pink); color:var(--accent-pink);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="menu-info">
+            <h4>รายการสินค้า (Catalog)</h4>
+            <p>ดูผลงานตัวอย่าง ลูกปัด กิ๊บติดชื่อ ลวดกำมะหยี่</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right menu-chevron"></i>
+      </button>
+
+      <!-- เมนูเช็คคิวงาน -->
       <button class="menu-item-btn" onclick="openPage('queuePage')">
         <div class="menu-left">
           <div class="menu-icon-box" style="background:#fef5e9; color:#e08f36;">
             <i class="fa-solid fa-list-check"></i>
           </div>
-          
           <div class="menu-info">
             <h4>เช็คคิวงาน (Queue)</h4>
             <p>ตรวจสถานะออเดอร์ & ลำดับคิวผลิต</p>
@@ -1184,6 +1187,7 @@
         <i class="fa-solid fa-chevron-right menu-chevron"></i>
       </button>
 
+      <!-- เมนูเช็คเลขพัสดุ -->
       <button class="menu-item-btn" onclick="openPage('trackingPage')">
         <div class="menu-left">
           <div class="menu-icon-box" style="background:#effbf4; color:#3aa474;">
@@ -1197,6 +1201,7 @@
         <i class="fa-solid fa-chevron-right menu-chevron"></i>
       </button>
 
+      <!-- เมนูบัตรสะสมแต้ม -->
       <button class="menu-item-btn" onclick="openPage('rewardPage')">
         <div class="menu-left">
           <div class="menu-icon-box" style="background:#fdebf2; color:var(--accent-pink);">
@@ -1210,6 +1215,7 @@
         <i class="fa-solid fa-chevron-right menu-chevron"></i>
       </button>
 
+      <!-- เมนูรีวิว -->
       <button class="menu-item-btn" onclick="openPage('reviewPage')">
         <div class="menu-left">
           <div class="menu-icon-box" style="background:#faebfa; color:#be69c4;">
@@ -1223,7 +1229,7 @@
         <i class="fa-solid fa-chevron-right menu-chevron"></i>
       </button>
     </div>
-
+    
     <!-- ==================== OVERLAY PAGES ==================== -->
 
     <!-- PAGE 1: Services Catalog -->
@@ -1605,7 +1611,7 @@
               <div class="bank-logo-badge" style="background:#138f2d;">KBANK</div>
               <div class="bank-details">
                 <h5>ธนาคารกสิกรไทย</h5>
-                <p>080-x-xxxxx-x</p>
+                <p>080-x-xxxxx-3</p>
               </div>
             </div>
             <button class="copy-chip" onclick="copyText('080-8-90289-3')">
